@@ -5,7 +5,7 @@ export function FormHeading(props: {
 }) {
     return (
         <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold leading-9 tracking-tight">
+            <h2 className="text-2xl font-semibold leading-9 tracking-tight">
                 {props.heading}
             </h2>
             {props.action}

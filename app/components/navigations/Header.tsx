@@ -1,7 +1,7 @@
 import React, { Fragment, useContext } from 'react';
 import { ClickableLogo } from '@app/components/logos/Clickable';
 import { Menu, Transition } from '@headlessui/react';
-import { cn } from '@lib/utils';
+import { cn } from '@app/utils/utils';
 import { useNavigate } from 'react-router-dom';
 
 /**

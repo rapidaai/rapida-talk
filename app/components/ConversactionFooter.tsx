@@ -1,5 +1,5 @@
 import Textarea from 'react-textarea-autosize';
-import { cn } from '@lib/utils';
+import { cn } from '@app/utils/utils';
 import { FileLabel } from '@app/components/form/files';
 import { FileInfo, ProcessingState } from '@app/types'
 
@@ -102,13 +102,13 @@ export const ConversactionFooter: React.FC<ConversactionFooterProps> = ({ input,
                             className={cn(
                                 "inset-y-0 left-3 my-auto flex h-8 w-8 items-center justify-center rounded-sm transition-all",
                                 disabled || !chatStarted || isSending
-                                    ? "cursor-not-allowed bg-white dark:bg-slate-600"
+                                    ? "cursor-not-allowed bg-gray-200 dark:bg-slate-600"
                                     : "bg-blue-500 hover:bg-blue-600 cursor-pointer",
                             )}
                         >
                             <span className="text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" className="w-5 h-5">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                 </svg>
                             </span>
                         </label>
@@ -136,9 +136,9 @@ export const ConversactionFooter: React.FC<ConversactionFooterProps> = ({ input,
 
                     <button
                         className={cn(
-                            "inset-y-0 right-3 my-auto flex h-8 w-8 items-center justify-center rounded-sm transition-all",
+                            "inset-y-0 right-3 my-auto flex h-10 w-10 items-center justify-center rounded-sm transition-all",
                             disabled || !chatStarted || input.trim().length === 0 || isSending
-                                ? "cursor-not-allowed bg-white dark:bg-slate-600"
+                                ? "cursor-not-allowed bg-gray-200 dark:bg-slate-600 dark:text-white text-black"
                                 : "bg-green-500 hover:bg-green-600",
                         )}
                         disabled={disabled || !chatStarted || isLoading || isSending}
@@ -146,7 +146,7 @@ export const ConversactionFooter: React.FC<ConversactionFooterProps> = ({ input,
                         {isSending ? (
                             <svg
                                 aria-hidden="true"
-                                className="h-5 w-5 animate-spin fill-stone-600 text-stone-200"
+                                className="h-5 w-5 animate-spin text-blue-600 fill-white"
                                 viewBox="0 0 100 101"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -167,7 +167,7 @@ export const ConversactionFooter: React.FC<ConversactionFooterProps> = ({ input,
                                 fill="none"
                                 className={cn(
                                     "h-5 w-5",
-                                    input.length === 0 ? "text-gray-300" : "text-white",
+                                    input.length === 0 ? "text-gray-500 dark:text-gray-700" : "text-white",
                                 )}
                                 strokeWidth="2"
                             >

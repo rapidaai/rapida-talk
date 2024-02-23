@@ -1,67 +1,32 @@
-// Type: Module
-// assistantModules.ts
-import { convertFileToBase64 } from '../utils/convertFileToBase64';
 import {
-  uploadImageAndGetDescription,
   uploadFile,
   createAssistant,
   createThread,
   runAssistant,
   deleteFile,
 } from '../services/api';
+import { CreateAssistantRequest, CreateAssistantResponse, CreateThreadResponse, IResponse, RunAssistantResponse, UploadedFileResponse } from '@app/types';
 
-interface AssistantDetails {
-  assistantName: string;
-  assistantModel: string;
-  assistantDescription: string;
-}
-
-interface UploadedFileResponse {
-  fileId: string;
-}
-
-interface AssistantDataResponse {
-  assistantId: string;
-}
-
-interface ThreadDataResponse {
-  threadId: string;
-}
 
 
 /**
-* Prepares and uploads a file for the chat assistant.
-* This can include converting images to base64, handling different file types, etc.
-* @param {File} file - The file to be uploaded.
-* @returns {Promise<string>} - The ID of the uploaded file.
-*/
+ * upload the file and get file id
+ * @param file 
+ * @param setStatusMessage 
+ * @returns 
+ */
 export const prepareUploadFile = async (file: File, setStatusMessage: (message: string) => void): Promise<string> => {
-  setStatusMessage('Preparing file for upload...');
 
-  // If the file is an image, get a description from GPT-4 Vision API
-  if (file.type.startsWith('image/')) {
-    setStatusMessage('Converting image to base64...');
-    const base64Image = await convertFileToBase64(file);
+  // return { fileId: jsonResponse.fileId }; // return only the fileId
 
-    setStatusMessage('Getting image description...');
-    const descriptionResponse = await uploadImageAndGetDescription(base64Image);
-
-    setStatusMessage('Creating description file...');
-    const descriptionBlob = new Blob([descriptionResponse.analysis], { type: 'text/plain' });
-    const descriptionFile = new File([descriptionBlob], 'description.txt');
-
-    setStatusMessage('Uploading description file...');
-    const uploadedFile: UploadedFileResponse = await uploadFile(descriptionFile);
-    setStatusMessage('Description file uploaded successfully. File ID: ' + uploadedFile.fileId);
-    return uploadedFile.fileId;
+  const uploadedFile: IResponse<UploadedFileResponse> = await uploadFile(file);
+  if (uploadedFile.success)  {
+    return uploadedFile.data.fileId
   }
 
-  // If the file is not an image, upload it as a normal file
-  setStatusMessage('Uploading file...');
-  const uploadedFile: UploadedFileResponse = await uploadFile(file);
-  console.log('Uploaded file response:', uploadedFile); // Add this line
-  setStatusMessage('File uploaded successfully. File ID: ' + uploadedFile.fileId);
-  return uploadedFile.fileId;
+  if (uploadedFile.errorMessage)
+    throw new Error(uploadedFile.errorMessage);
+  throw new Error("Unable to process your request, please try again.");
 };
 
 
@@ -72,34 +37,34 @@ export const prepareUploadFile = async (file: File, setStatusMessage: (message: 
 * @param {string} fileId - The ID of the uploaded file associated with the assistant.
 * @returns {Promise<string>} - The ID of the created assistant.
 */
-export const initializeAssistant = async (assistantDetails: AssistantDetails, fileIds: string[]): Promise<string> => {
-  console.log('Initializing assistant...');
-  
-  // Log the assistantDetails and fileIds
-  console.log('(initialize) -> Assistant Details:', assistantDetails);
-  console.log('(initialize) -> File IDs:', fileIds);
-
-  const assistantData: AssistantDataResponse = await createAssistant(
-      assistantDetails.assistantName,
-      assistantDetails.assistantModel,
-      assistantDetails.assistantDescription,
-      fileIds
+export const initializeAssistant = async (assistantDetail: CreateAssistantRequest): Promise<string> => {
+  const assistantData: IResponse<CreateAssistantResponse> = await createAssistant(
+      assistantDetail.assistantName,
+      assistantDetail.assistantModel,
+      assistantDetail.assistantInstruction,
+      assistantDetail.fileIds
   );
-
-  console.log('Assistant created successfully. Assistant ID:', assistantData.assistantId);
-  return assistantData.assistantId; 
+  if (assistantData.success)
+    return  assistantData.data.assistantId
+  if (assistantData.errorMessage)
+    throw new Error(assistantData.errorMessage);
+  throw new Error("Unable to process your request, please try again.");
 };
 
+
+
 /**
-* Creates a chat thread with the initial message.
-* @param {string} inputMessage - The initial message for the thread.
-* @returns {Promise<string>} - The ID of the created thread.
-*/
+ * 
+ * @param inputMessage 
+ * @returns 
+ */
 export const createChatThread = async (inputMessage: string): Promise<string> => {
-  console.log('Creating chat thread...');
-  const threadData: ThreadDataResponse = await createThread(inputMessage);
-  console.log('Chat thread created successfully. Thread ID:', threadData.threadId);
-  return threadData.threadId;
+  const threadData: IResponse<CreateThreadResponse> = await createThread(inputMessage);
+  if (threadData.success)
+    return  threadData.data.threadId
+  if (threadData.errorMessage)
+    throw new Error(threadData.errorMessage);
+  throw new Error("Unable to process your request, please try again.");
 };
 
 
@@ -111,15 +76,14 @@ export const createChatThread = async (inputMessage: string): Promise<string> =>
 * @param {string} threadId - The ID of the thread.
 * @returns {Promise<void>} - A promise that resolves when the assistant is successfully run.
 */
-export const runChatAssistant = async (assistantId: string, threadId: string): Promise<string | null> => {
-  
-  console.log('Running chat assistant...');
+export const runChatAssistant = async (assistantId: string, threadId: string): Promise<string> => {
+  const assistantData: IResponse<RunAssistantResponse>  = await runAssistant(assistantId, threadId);
+  if (assistantData.success)
+    return  assistantData.data.runId;
+  if (assistantData.errorMessage)
+    throw new Error(assistantData.errorMessage);
+  throw new Error("Unable to process your request, please try again.");
 
-  const response = await runAssistant(assistantId, threadId);
-  const runId = response.runId;
-
-  console.log('Chat assistant run successfully. Run ID:', runId);
-  return runId; 
 };
 
 /**

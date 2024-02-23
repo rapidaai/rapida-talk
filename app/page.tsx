@@ -36,14 +36,19 @@ export default function Page() {
     } = useChatState();
 
     useChatManager(setChatMessages, setStatusMessage, setChatManager, setIsMessageLoading, setProgress, setIsLoadingFirstMessage);
-    useStartAssistant(assistantId, chatManager, initialThreadMessage);
+    // useStartAssistant(assistantId, chatManager, initialThreadMessage);
 
     const startChatAssistant = async () => {
         setIsButtonDisabled(true);
         setStartLoading(true);
         if (chatManager) {
             try {
-                await chatManager.startAssistant({ assistantName, assistantInstruction }, fileIds, initialThreadMessage);
+                await chatManager.startAssistant({
+                    assistantName: assistantName,
+                    assistantInstruction: assistantInstruction,
+                    assistantModel: "gpt-3.5-turbo-0125",
+                    fileIds: fileIds
+                }, initialThreadMessage);
                 setChatStarted(true);
             } catch (error) {
                 console.error('Error starting assistant:', error);

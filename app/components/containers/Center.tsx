@@ -1,4 +1,4 @@
-import { cn } from '@lib/utils'
+import { cn } from '@app/utils/utils'
 import React from 'react'
 
 interface CenterContainerProps extends React.HTMLAttributes<HTMLDivElement> { }

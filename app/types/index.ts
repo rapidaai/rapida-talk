@@ -1,3 +1,4 @@
+import { runAssistant, createAssistant } from '../services/api';
 
 export type FileInfo = {
   name: string;
@@ -24,8 +25,35 @@ export type ProcessFile = {
   status: ProcessingState;
 }
 
-export type IResponse = {
+export type IResponse<T> = {
   success: boolean, 
   errorMessage: string | null
-  data: any
+  data: T
+}
+
+export interface CreateAssistantResponse {
+  assistantId: string;
+}
+
+export interface UploadedFileResponse {
+  fileId: string;
+}
+
+export interface CreateThreadResponse {
+  threadId: string;
+}
+
+export interface RunAssistantResponse {
+  runId: string
+}
+
+export interface RunAssistantStatusResponse {
+  status: string
+}
+
+export interface CreateAssistantRequest {
+  assistantName: string;
+  assistantInstruction: string;
+  assistantModel: string;
+  fileIds: string[];
 }

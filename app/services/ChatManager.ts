@@ -1,4 +1,5 @@
 // Importing necessary modules
+import { CreateAssistantRequest } from '@app/types';
 import {
   prepareUploadFile,
   initializeAssistant,
@@ -12,9 +13,6 @@ import {
   updateChatState
 } from '../modules/chatModules';
 
-/**
- * Interface for the state of the chat
- */
 interface ChatState {
   assistantId: string | null; // ID of the assistant
   threadId: string | null; // ID of the chat thread
@@ -74,25 +72,13 @@ class ChatManager {
   }
 
   // Method to start the assistant
-  async startAssistant(assistantDetails: any, fileIds: string[], initialMessage: string): Promise<void> {
-    console.log('Starting assistant...');
-    
-    this.state.setStatusMessage('Initializing chat assistant...');
+  async startAssistant(assistantRequest: CreateAssistantRequest, initialMessage: string): Promise<void> {
     this.state.isLoading = true;
-    
     try {
-
-    
-      // Initialize the assistant
-      this.state.setStatusMessage('Create Assistant...');
-      const assistantId = await initializeAssistant(assistantDetails, fileIds);
+      const assistantId = await initializeAssistant(assistantRequest);
       if (assistantId === null) {
         throw new Error('AssistantId is null');
       }
-      this.state.setStatusMessage('Assistant created...');
-  
-      // Create the chat thread
-      this.state.setStatusMessage('Creating thread...');
       this.state.assistantId = assistantId;
       const threadId = await createChatThread(initialMessage);
       if (threadId === null) {

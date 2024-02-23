@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '@lib/utils';
+import { cn } from '@app/utils/utils';
 
 interface ClickableLogoProps extends React.ImgHTMLAttributes<HTMLImageElement> {
     isBeta?: boolean;
